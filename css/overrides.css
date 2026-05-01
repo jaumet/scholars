@@ -1,0 +1,244 @@
+/* ================================================
+   SQUARESPACE STATIC SITE FIXES
+   ================================================ */
+
+/* --- 1. CANCEL ENTRY ANIMATIONS ---
+   Squarespace hides header/footer/section content for 2s
+   waiting for JS to boot. Without JS it stays hidden. */
+section > .content-wrapper,
+header,
+footer {
+    animation: none !important;
+}
+.preFade, .preScale, .preFlex {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+}
+
+/* --- 2. IMAGE BLOCKS WITH has-aspect-ratio ---
+   Container has inline padding-bottom (JS-set %) to maintain
+   aspect ratio. Image must be position:absolute to fill it.
+   My general img[data-loader] rule was breaking this — fix here. */
+.sqs-image-shape-container-element.has-aspect-ratio {
+    overflow: hidden !important;
+}
+.sqs-image-shape-container-element.has-aspect-ratio img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+}
+
+/* --- 3. IMAGE BLOCKS WITHOUT has-aspect-ratio ---
+   No JS-set padding-bottom, so container has no height.
+   Use natural image dimensions instead. */
+.sqs-image-shape-container-element:not(.has-aspect-ratio) {
+    height: auto !important;
+    overflow: visible !important;
+}
+.sqs-image-shape-container-element:not(.has-aspect-ratio) img {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    opacity: 1 !important;
+}
+
+/* --- 4. image-block-wrapper (old non-v2 blocks, e.g. index.html) ---
+   CSS sets img position:absolute + width:100% already.
+   Just ensure height fills the padding-bottom container. */
+.sqs-block-image .image-block-outer-wrapper:not(.image-block-v2) .image-block-wrapper img {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+/* --- 5. GALLERY GRID ---
+   JS sets padding-bottom on each item-wrapper (height:0 by default).
+   Replace with CSS grid + aspect-ratio. */
+.gallery-grid-wrapper {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 35px !important;
+    height: auto !important;
+    position: static !important;
+}
+.gallery-grid-item {
+    flex: 0 0 calc(33.333% - 24px) !important;
+    overflow: hidden !important;
+}
+@media (max-width: 767px) {
+    .gallery-grid-item { flex: 0 0 calc(50% - 18px) !important; }
+}
+@media (max-width: 480px) {
+    .gallery-grid-item { flex: 0 0 100% !important; }
+}
+.gallery-grid-item-wrapper {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4/3 !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+}
+.gallery-grid-item img {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+}
+
+/* --- 6. GALLERY MASONRY (recursos.html) ---
+   JS positions each item individually. All items are opacity:0
+   without [data-show] attribute (JS adds it).
+   Convert to CSS column-count masonry fallback. */
+.gallery-masonry-item:not([data-show]) .gallery-masonry-item-wrapper {
+    opacity: 1 !important;
+    animation: none !important;
+}
+.gallery-masonry-wrapper {
+    display: block !important;
+    column-count: 3 !important;
+    column-gap: 55px !important;
+    position: static !important;
+    height: auto !important;
+}
+@media (max-width: 767px) {
+    .gallery-masonry-wrapper { column-count: 2 !important; }
+}
+@media (max-width: 480px) {
+    .gallery-masonry-wrapper { column-count: 1 !important; }
+}
+.gallery-masonry-item {
+    break-inside: avoid !important;
+    margin-bottom: 20px !important;
+    position: static !important;
+    display: block !important;
+}
+.gallery-masonry-item-wrapper {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+}
+.gallery-masonry-item img {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+}
+
+/* --- 7. GALLERY REEL (slider with arrows) ---
+   site.js handles this as a proper fade slider.
+   The .gallery-reel container needs position:relative + overflow:hidden.
+   Individual items are stacked via position:absolute (set by JS).
+   We only provide base structural styles here; JS does the rest. */
+.gallery-reel-wrapper {
+    position: relative !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+.gallery-reel-list {
+    position: relative !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+/* Items: JS sets position:absolute + opacity transitions.
+   This ensures they fill the container even before JS runs. */
+.gallery-reel-item {
+    width: 100% !important;
+    height: 100% !important;
+}
+.gallery-reel-item-wrapper {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    z-index: 0 !important;        /* site.css posa z-index:-1 → invisible */
+}
+.gallery-reel-item-src {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    display: block !important;    /* site.css posa display:none */
+    opacity: 1 !important;        /* site.css posa opacity:0 */
+    width: 100% !important;
+    height: 100% !important;
+}
+.gallery-reel-item-src img {
+    position: absolute !important;
+    top: 0 !important; left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+}
+/* Controls: visible once JS is running. */
+.gallery-reel-controls {
+    display: flex !important;
+    gap: 8px !important;
+}
+.gallery-reel-progress,
+.gallery-reel-scroll-indicator-dots {
+    display: none !important;
+}
+/* Counter injected by JS */
+.reel-counter {
+    display: inline-block;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    align-self: center;
+    padding-left: 8px;
+}
+/* Caption overlay on active slide */
+.gallery-caption-reel {
+    display: none;
+}
+.gallery-caption-reel.gallery-caption-reel-active {
+    display: block;
+}
+/* No-JS fallback: show first item using first-child */
+.no-js .gallery-reel-item:first-child {
+    display: block !important;
+    opacity: 1 !important;
+    position: relative !important;
+}
+
+/* --- 8. SECTION BACKGROUND IMAGES ---
+   Already position:absolute filling the section. Section needs
+   enough height from its content to show them. */
+.section-background {
+    min-height: 200px;
+}
+
+/* --- 9. COMBINATION ANIMATION CLASSES ---
+   static.css sets .image-block-wrapper { opacity:0 } for combination-animation-fade-in,
+   slide-up, tilt-up, tilt-down, collide, focus-in, etc. JS adds .animation-loaded to
+   reveal them. Without JS every image block stays invisible. */
+.image-block-wrapper {
+    opacity: 1 !important;
+}
+
+/* --- 10. SQUARESPACE LIGHTBOX HIDDEN DUPLICATES ---
+   Squarespace embeds a second copy of each image inside
+   .gallery-lightbox-* elements with display:none inline style.
+   Our site.js custom lightbox reads images from the main gallery items
+   instead. Keep Squarespace's duplicate wrappers hidden. */
+.gallery-lightbox-outer-wrapper {
+    display: none !important;
+}
